@@ -1,0 +1,13 @@
+{
+ "version": "exp-0.1",
+ "updated": "2026-09-06 06:25",
+ "playbooks": {
+  "eastmoney__jiaagedao_export": {
+   "software": "东方财富终端",
+   "func": "导出交割单",
+   "file": "playbooks/东方财富终端__导出交割单.json",
+   "verified": 1,
+   "added": "2026-09-06"
+  }
+ }
+}
