@@ -1,0 +1,180 @@
+[
+ {
+  "id": 1,
+  "hash": "274c6895",
+  "tag": [
+   "多屏",
+   "截图"
+  ],
+  "symptom": "未裁剪的全屏图看不清且难定位",
+  "rule": "先 list-windows 拿窗口 rect → region 裁剪 → 再读图",
+  "fixed": "",
+  "date": "2026-09-01"
+ },
+ {
+  "id": 2,
+  "hash": "e8aa878d",
+  "tag": [
+   "窗口"
+  ],
+  "symptom": "窗口 title 随内容动态变化,按标题找会 not found",
+  "rule": "用 list-windows 返回的 handle/pid 定位激活",
+  "fixed": "",
+  "date": "2026-09-01"
+ },
+ {
+  "id": 6,
+  "hash": "34936d34",
+  "tag": [
+   "视觉闭环"
+  ],
+  "symptom": "Windows 原生截图不含鼠标,看不到光标落点",
+  "rule": "GetCursorInfo 拿坐标+Pillow 画靶心;先移后截读图确认",
+  "fixed": "已实现 cursor.py",
+  "date": "2026-09-01"
+ },
+ {
+  "id": 7,
+  "hash": "6f15f237",
+  "tag": [
+   "菜单"
+  ],
+  "symptom": "下拉菜单项靠字号/字间距推算纵坐标必点偏",
+  "rule": "先展开菜单→截图→读图定位文字行再点;或转录制",
+  "fixed": "",
+  "date": "2026-09-01"
+ },
+ {
+  "id": 8,
+  "hash": "1bc4aa61",
+  "tag": [
+   "对话框"
+  ],
+  "symptom": "弹出窗子控件在全屏图上盲点会错",
+  "rule": "先 list-windows 拿对话框 rect,子控件按 rect 内相对偏移定位",
+  "fixed": "",
+  "date": "2026-09-01"
+ },
+ {
+  "id": 10,
+  "hash": "68f7930c",
+  "tag": [
+   "前台锁"
+  ],
+  "symptom": "后台进程 SetForegroundWindow 常被前台锁忽略,点击落到别的窗",
+  "rule": "min→restore→focus 三连循环;置顶和点击放同一进程",
+  "fixed": "",
+  "date": "2026-09-01"
+ },
+ {
+  "id": 10.5,
+  "hash": "326a9c51",
+  "tag": [
+   "分流"
+  ],
+  "symptom": "数据就在本地文件却去点菜单,点偏3次耗一小时",
+  "rule": "第0阶段三级分流:API直连>本地文件>GUI;走直连要说明原因",
+  "fixed": "",
+  "date": "2026-09-01"
+ },
+ {
+  "id": 12,
+  "hash": "45e397ef",
+  "tag": [
+   "引擎bug"
+  ],
+  "symptom": "64位Python剪贴板写入静默失败,Ctrl+V 粘贴空气",
+  "rule": "Win32 句柄 API 必须声明 restype=c_void_p;写后读回自检",
+  "fixed": "native.py 已修",
+  "date": "2026-09-01"
+ },
+ {
+  "id": 13,
+  "hash": "097b6f2e",
+  "tag": [
+   "引擎bug"
+  ],
+  "symptom": "key('return') 静默失败,VK_MAP 无此键名",
+  "rule": "VK_ALIAS 别名表;调用前 dry=True 干跑验证;返回值必查",
+  "fixed": "native.py 已修",
+  "date": "2026-09-01"
+ },
+ {
+  "id": 14,
+  "hash": "271c7d83",
+  "tag": [
+   "流程纪律"
+  ],
+  "symptom": "同手段反复重试不达,陷入死循环",
+  "rule": "同一手段2次无效立即转录制模式(recorder gate),禁止第3次盲试",
+  "fixed": "recorder.py",
+  "date": "2026-09-01"
+ },
+ {
+  "id": 15,
+  "hash": "7a7b73a6",
+  "tag": [
+   "适配层"
+  ],
+  "symptom": "搜索结果布局每次都变,硬套坐标必失败",
+  "rule": "每次先 move --confirm 截图读图确认目标位置再点",
+  "fixed": "",
+  "date": "2026-09-01"
+ },
+ {
+  "id": 16,
+  "hash": "575b65ec",
+  "tag": [
+   "多屏",
+   "DPI"
+  ],
+  "symptom": "多屏负坐标合法,别把窗口'拉回';DPI unaware 与 aware 坐标差 566px",
+  "rule": "用 EnumDisplayMonitors 取真实 rect;import native 即自动 DPI aware",
+  "fixed": "",
+  "date": "2026-09-01"
+ },
+ {
+  "id": 17,
+  "hash": "5a539f4d",
+  "tag": [
+   "工程"
+  ],
+  "symptom": "纪律只写在文档里拦不住 AI 硬试",
+  "rule": "纪律代码化:recorder.py gate 把'该转录制'变成脚本返回值",
+  "fixed": "recorder.py",
+  "date": "2026-09-01"
+ },
+ {
+  "id": 18,
+  "hash": "0b3abbe1",
+  "tag": [
+   "录制器"
+  ],
+  "symptom": "采集循环内 sleep 会漏录双击(第二次 down 丢失)",
+  "rule": "高频采集循环禁 sleep;事后效果图延后异步抓",
+  "fixed": "recorder.py 已修",
+  "date": "2026-09-01"
+ },
+ {
+  "id": 19,
+  "hash": "7b42cddd",
+  "tag": [
+   "引擎bug"
+  ],
+  "symptom": "光标隐藏时 hCursor=None,cursor.py shot TypeError 崩溃",
+  "rule": "已修:hCursor None 时返回 kind:hidden;--no-mark 仍会走该路径",
+  "fixed": "cursor.py 2026-09-06",
+  "date": "2026-09-06"
+ },
+ {
+  "id": 20,
+  "hash": "cea6628b",
+  "tag": [
+   "引擎bug"
+  ],
+  "symptom": "多屏下无 region 全图截图的 marker 整体错位一块屏,靶心非真实位置",
+  "rule": "已修:marker 统一按截图原点换算;返回新增 origin;坐标以标注框数字为准",
+  "fixed": "cursor.py 2026-09-06",
+  "date": "2026-09-06"
+ }
+]
