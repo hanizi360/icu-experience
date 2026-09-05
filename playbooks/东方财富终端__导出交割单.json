@@ -1,0 +1,111 @@
+{
+ "id": "eastmoney__jiaagedao_export",
+ "software": {
+  "name": "东方财富终端",
+  "match": "东方财富证券",
+  "focus_match": "东方财富终端"
+ },
+ "func": "导出交割单",
+ "trigger_words": [
+  "导出交割单",
+  "交割单",
+  "导交割单"
+ ],
+ "verified": {
+  "count": 1,
+  "last": "2026-09-06",
+  "by": "zcode"
+ },
+ "pre": [
+  "mainfree.exe 进程存在",
+  "交易账号/<<密码已脱敏>"
+ ],
+ "steps": [
+  {
+   "act": "focus",
+   "match": "东方财富终端",
+   "note": "前台锁时 min→restore→focus 三连,循环至 active"
+  },
+  {
+   "act": "hotkey",
+   "key": "f12",
+   "label": "弹出交易登录窗(账号<<密码已脱敏>"
+  },
+  {
+   "act": "click",
+   "label": "登录按钮",
+   "xy_rel": [
+    0.098,
+    0.33
+   ],
+   "wait": 4,
+   "note": "登录窗居中弹出;务必 move --confirm 看靶心在橙色登录按钮上再点"
+  },
+  {
+   "act": "click",
+   "label": "导航树·交割单",
+   "xy_rel": [
+    0.04,
+    0.299
+   ],
+   "wait": 2,
+   "note": "查询分类第7子项;别点成下方相邻的银证转账"
+  },
+  {
+   "act": "click",
+   "label": "导航与内容交界竖条·渐变区正中",
+   "xy_rel": [
+    0.259,
+    0.501
+   ],
+   "note": "单击收起导航(反应区在导航栏正中间,靠上无效);收起后顶部才露出导出数据按钮"
+  },
+  {
+   "act": "click",
+   "label": "顶部工具条·导出数据",
+   "xy_rel": [
+    0.942,
+    0.046
+   ],
+   "wait": 1.5,
+   "note": "左邻是「全部数据汇总」(带子菜单),别点混;导航未收起时本按钮不可见"
+  },
+  {
+   "act": "click",
+   "label": "子菜单·自排序区间交割数据",
+   "xy_rel": [
+    0.813,
+    0.09
+   ],
+   "wait": 2,
+   "note": "子菜单三项:全部数据汇总/自排序区间交易明细/自排序区间交割数据"
+  },
+  {
+   "act": "click",
+   "label": "向导·下一步",
+   "xy_rel": [
+    0.602,
+    0.585
+   ],
+   "times": 2,
+   "wait": 1.5,
+   "note": "第2步默认桌面 Table_xxxx.xlsx + EXCEL(*.XLSX);第3步字段全选"
+  },
+  {
+   "act": "wait",
+   "sec": 3,
+   "note": "进度条满+提示「操作完成」即落盘"
+  }
+ ],
+ "verify": {
+  "file_glob": "C:/Users/*/Desktop/Table_*.xlsx",
+  "within_min": 2,
+  "rows_min": 50
+ },
+ "pitfalls": [
+  "导出数据置灰→先收导航",
+  "导出数据/全部数据汇总相邻别点混",
+  "交界竖条反应区在正中间",
+  "点前必 move --confirm 看靶心"
+ ]
+}
