@@ -2,7 +2,7 @@
 
 > 本文件是 `C:\Users\Cui\WorkBuddy\` 整个工程的**项目总结与冷启动入口**。
 > 任何 AI 新会话在本目录工作时,先读完本文件再动手;细节按文中索引按需加载。
-> 最后更新:2026-09-06 · 版本 v1.2(版本真相源:`工作台注册表.json`)
+> 最后更新:2026-09-06 · 版本 v1.3(版本真相源:`工作台注册表.json`)
 
 ## 一、这是什么
 
@@ -21,7 +21,7 @@
 
 | 子台 | 功能 | 数据文件 | 数据链/脚本 |
 |------|------|---------|------------|
-| 首板工作台 | ≥4%候选池/实时选股/连板天梯/题材 | ~~首板数据.json 已废~~ | stock.db 构建注入(`_build_shouban.py`,模板 `_build/首板工作台.模板.html`)+ 东财/腾讯实时直连(页面运行时);「🔄刷新」走 `/api/refresh-shouban` |
+| 首板工作台 | ≥4%候选池/实时选股/连板天梯/题材/**快速买入** | ~~首板数据.json 已废~~ | stock.db 构建注入(`_build_shouban.py`,模板 `_build/首板工作台.模板.html`)+ 东财/腾讯实时直连(页面运行时);「🔄刷新」走 `/api/refresh-shouban`;行内「买」按钮→`/api/em-buy`→唤东财交易窗自动填单(对方最优价+保护价现价×1.015+1/2仓原生按钮),「买入」人工手点(见 PLAYBOOKS 剧本#2) |
 | 新闻哨兵工作台 | 全量新闻流水精选(5 板块 25-35 条) | 新闻哨兵数据.json | `A股/news_sentinel_fetch.py`(东财7×24+新浪)→ AI 语义打分;自动任务 8:40 |
 | 美股监测工作台 | 29 只美股标的隔夜→A股映射(光模块/存储/设备/AI芯片…) | 美股监测数据.json | `A股/fetch_us_live.py`(东财 push2delay 实时);页面 9/5 被增强(实时行情注入) |
 | 板块工作台 | 3涨3跌预测+对账学习闭环+全量496板块信号+**对冲盘温度计**(中信期货IF) | 板块数据.json | `A股/sector_forecast.py` 采原料 → AI 对账+生成预测;温度计 `build_citic_history.py`→`_build_signal.py`→`citic_signal.json`(页面运行时 fetch) |
@@ -53,7 +53,8 @@ news_sentinel_fetch.py / sector_forecast.py / build_citic_history.py + _build_si
 位置 `skills/i-can-see-you/`。执行内核:`native.py`(零依赖 ctypes:鼠标/键盘[UNICODE 中文]/窗口/剪贴板)、`find.py`(UIA+模板匹配)、`cursor.py`(截图+光标靶心)、`recorder.py`(录制/重放)、`experience.py`(经验库)。
 **文档**:`SKILL.md`(入口卡,3.4KB)+ `references/LOGIC.md`(逻辑唯一规格 + K1-K21 踩坑库,**实跑前后必读第 8 节**)+ `PLAYBOOKS.md`(已录剧本)+ FAQ/ARCHITECTURE/FLOWCHART。
 **核心纪律**:① move --confirm 看靶心才 click;② 坐标显式参照系(mss 全图图内=native+(3840,1834));③ 卡住先截图取证,禁止无图下结论;④ 两次失败转录制;⑤ 返回值必查;⑥ 踩坑回流。
-**第 0 阶段分流**:API/本地数据直连优先,GUI 最后。已覆盖:东财(登录/交割单导出/买股/数据下载)、网易云;新软件写新适配层。
+**第 0 阶段分流**:API/本地数据直连优先,GUI 最后。已覆盖:东财(登录/交割单导出/买股填单/数据下载)、网易云;新软件写新适配层。
+**买股填单链**(2026-09-06):`native.focus` 已升级 `_force_foreground`(Alt→AttachThreadInput→SwitchToThisWindow),后台服务进程抢前台必成;交易窗自绘控件 UIA 死路,走窗口相对坐标+键盘;剧本 `eastmoney__quick_buy` + LOGIC K22。
 
 ## 九、关键纪律(全部血泪)
 
@@ -66,6 +67,7 @@ news_sentinel_fetch.py / sector_forecast.py / build_citic_history.py + _build_si
 ## 十、已知状态与待办
 
 - 美股监测数据停留在 8/11 旧版(9/4 被 WorkBuddy 误删,未恢复),需重建当日数据链;
+- 快速买入已上线(候选池/涨停池行内「买」按钮→交易窗自动填单,买入人工手点);**盘中实单验收待用户**(9/6 周日晚仅做了非提交态验证:600000/688170/003040 三链全通);
 - WorkBuddy 侧旧 9:25 首板任务(automation-1786331299903)已死待用户在 UI 删除;
 - 首板台温度计已迁至板块工作台(用户决定);E:\zcard 首板模板仍在,`_build/` 模板为日常构建用;
 - 每交易日 15:40 后检查板块台是否更新(对账+新预测),8:40 后检查新闻哨兵。
