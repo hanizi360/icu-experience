@@ -1,0 +1,29 @@
+name: validate-experience
+on:
+  push: {branches: [staging, main]}
+  issues: {types: [opened]}
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: 校验经验 JSON schema
+        run: |
+          python3 - <<'PY'
+          import json, glob, sys
+          errs = []
+          for f in glob.glob('playbooks/*.json'):
+              d = json.load(open(f, encoding='utf-8'))
+              for k in ('id','software','func','steps'):
+                  if not d.get(k): errs.append(f'{f}: 缺 {k}')
+              for i, s in enumerate(d.get('steps', [])):
+                  if 'xy_rel' in s:
+                      x, y = s['xy_rel']
+                      if not (0 <= x <= 1 and 0 <= y <= 1):
+                          errs.append(f'{f}: step{i} xy_rel 越界(必须是 0~1 比例)')
+          json.load(open('pitfalls.json', encoding='utf-8'))
+          print('校验完成,', len(errs), '个错误'); [print(' -', e) for e in errs]
+          sys.exit(1 if errs else 0)
+          PY
+      - name: Issue 贡献自动解析(可选机器人钩子位)
+        run: echo "Issue → staging 的自动转发脚本挂这里"
