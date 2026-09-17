@@ -1,0 +1,88 @@
+{
+ "id": "jianying__append_clip_to_timeline",
+ "software": {
+  "name": "剪映专业版",
+  "match": "剪映专业版",
+  "focus_match": "剪映专业版"
+ },
+ "func": "把媒体库视频片段追加到主轨链尾（AI半自动：脚本管坐标执行，AI读两三张图做视觉闭环）",
+ "trigger_words": [
+  "追加片段",
+  "拖入时间轴",
+  "上轨",
+  "剪映加片段",
+  "jy-append"
+ ],
+ "verified": {
+  "count": 3,
+  "last": "2026-09-18",
+  "by": "zcode"
+ },
+ "pre": [
+  "剪映已打开目标草稿；目标片段文件已在媒体库（缩略图带「已添加」徽章=已在轨，别重复加）",
+  "辅助脚本 E:\\zcard\\视频\\工作台\\_jy_append_shot.py（grid/drag/click 三命令，封装 native.py）",
+  "<<红线: media 落点必须先 aim 截图验靶心，看到光标在目标缩略图上才允许 --yes 拖拽",
+  "<<红线: drop 点必须落在已有主轨的 clip 带 y 上，偏到空轨区会自动新建废稿轨道"
+ ],
+ "steps": [
+  {
+   "act": "focus",
+   "match": "剪映专业版",
+   "note": "native.py focus"
+  },
+  {
+   "act": "window",
+   "op": "max",
+   "match": "剪映专业版",
+   "note": "K27: 最大化锁死参照系，坐标不再随窗口挪动失效；用户 2026-09-18 钉死"
+  },
+  {
+   "act": "script",
+   "cmd": "python _jy_append_shot.py grid",
+   "note": "输出窗口 rect + 媒体库三列中心 native x（-3578/-3363/-3099 当窗满屏3862宽时）+ 全窗截图 jy_window.png"
+  },
+  {
+   "act": "read-image",
+   "label": "jy_window.png 找目标缩略图的行 y",
+   "note": "媒体库会滚动、行位不固定，此步必须视觉读图；列用 grid 给的三列，凑出 media_xy"
+  },
+  {
+   "act": "script",
+   "cmd": "python _jy_append_shot.py drag media_x,media_y drop_x,drop_y   （不带--yes=只出 jy_aim.png）",
+   "note": "读 jy_aim.png 验靶心：光标必须压在目标缩略图上；错了改坐标重验，两连败转 K14 换路"
+  },
+  {
+   "act": "read-image",
+   "label": "jy_window.png 找链尾 drop 点",
+   "note": "主轨 clip 带最右片段右边缘 +20px；y=主轨中心（3862x2182 窗时 ≈ rect_y+1720，xy_rel≈0.788）；磁吸会自动贴合"
+  },
+  {
+   "act": "script",
+   "cmd": "python _jy_append_shot.py drag media_x,media_y drop_x,drop_y --yes",
+   "note": "执行拖拽，自动出 jy_done.png",
+   "wait": 1.0
+  },
+  {
+   "act": "read-image",
+   "label": "jy_done.png 验收",
+   "note": "三查: 链尾多出一段且贴合无间隙；无多出来的新轨道；预览时间码总时长增量≈片段时长"
+  },
+  {
+   "act": "stop",
+   "label": "验收过才报完成",
+   "note": "时长对不上=可能拖错素材，立即 Ctrl+Z 回滚排查"
+  }
+ ],
+ "verify": {
+  "截图区": "jy_done.png 链尾新增段 + 总时长增量 = 片段时长（帧级吻合）",
+  "within_min": 1
+ },
+ "pitfalls": [
+  "窗口被挪后旧坐标全废(K24): 每次动手先 focus+max(K27)，坐标随 window rect 重算，别复用上一次的",
+  "全窗截图(3862宽)在 Read 里显示为缩图，估坐标要乘缩放系数(≈1.938)，估错就抓错格子——所以 aim 验证一步都不能省",
+  "媒体库缩略图带「已添加」徽章的=已在轨；旧试制作废片(group2v2等)也躺在库里，行数算错一行就抓到它们",
+  "drop y 偏出 clip 带会新建上层废稿轨道；错了 Ctrl+Z 撤轨删片重来",
+  "删除链尾片段: click 选中该片段→Delete 键；删除前确认选中的是目标段(白框+标签)",
+  "时长账目是硬校验: 拖前记总时长，拖后增量必须等于片段时长，对不上=拖错"
+ ]
+}
