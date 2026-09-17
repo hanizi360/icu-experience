@@ -1,6 +1,6 @@
 {
  "version": "exp-0.1",
- "updated": "2026-09-06 06:25",
+ "updated": "2026-09-18",
  "playbooks": {
   "eastmoney__jiaagedao_export": {
    "software": "东方财富终端",
@@ -8,6 +8,20 @@
    "file": "playbooks/东方财富终端__导出交割单.json",
    "verified": 1,
    "added": "2026-09-06"
+  },
+  "eastmoney__quick_buy": {
+   "software": "东方财富证券",
+   "func": "交易窗快速买股填单",
+   "file": "playbooks/东方财富证券__交易窗快速买股填单.json",
+   "verified": 3,
+   "added": "2026-09-06"
+  },
+  "jianying__append_clip_to_timeline": {
+   "software": "剪映专业版",
+   "func": "追加片段到时间轴链尾",
+   "file": "playbooks/剪映专业版__追加片段到时间轴链尾.json",
+   "verified": 3,
+   "added": "2026-09-18"
   }
  }
 }
